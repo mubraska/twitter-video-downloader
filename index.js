@@ -38,7 +38,7 @@ module.exports = function(tweetUrl) {
     totalDuration: 0
   };
 
-  twitterdl.download(tweetUrl)
+  return twitterdl.download(tweetUrl)
     .then((result) => {
       console.log("first_buffer", result);
       return Promise.all([parsem3u(result)]);
