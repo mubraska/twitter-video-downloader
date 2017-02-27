@@ -31,16 +31,14 @@ function getUriFromm3u(m3u) {
   return m3u.items.StreamItem.slice(-1)[0].properties.uri;
 }
 
-var video = "https://twitter.com/Emperor_RM/status/833766583122149378";
-
-module.exports =
+module.exports = function(tweetUrl) {
   context = {
     videoStream: new streamBuffers.ReadableStreamBuffer(),
     downloadQueue: [],
     totalDuration: 0
   };
 
-  twitterdl.download(video)
+  twitterdl.download(tweetUrl)
     .then((result) => {
       console.log("first_buffer", result);
       return Promise.all([parsem3u(result)]);
@@ -81,9 +79,6 @@ module.exports =
       return Promise.all([ffmpeg.convertToMp4Buffer(context.videoStream, context.totalDuration)]);
     })
     .then((result) => {
-      resolve(result[0]);
-    })
-    .catch((err) => {
-        console.log(err);
-        reject(err);
+      return result[0];
     });
+}
