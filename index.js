@@ -32,53 +32,55 @@ function getUriFromm3u(m3u) {
 }
 
 module.exports = function(tweetUrl) {
-  context = {
-    videoStream: new streamBuffers.ReadableStreamBuffer(),
-    downloadQueue: [],
-    totalDuration: 0
-  };
+  return new Promise((resolve) => {
+    context = {
+      videoStream: new streamBuffers.ReadableStreamBuffer(),
+      downloadQueue: [],
+      totalDuration: 0
+    };
 
-  return twitterdl.download(tweetUrl)
-    .then((result) => {
-      console.log("first_buffer", result);
-      return Promise.all([parsem3u(result)]);
-    })
-    .then((result) => {
-      console.log("stream_item", result[0].items.StreamItem);
-      var uri = getUriFromm3u(result[0]);
-      console.log("first_parse", uri);
-      return downloader(uri);
-    })
-    .then((result) => {
-      console.log("second_buffer", result);
-      return Promise.all([parsem3u(result)]);
-    })
-    .then ((result) => {
-      console.log("playlist_item", result[0].items.PlaylistItem);
-      result[0].items.PlaylistItem.forEach((item) => {
-        context.totalDuration += item.properties.duration;
+    twitterdl.download(tweetUrl)
+      .then((result) => {
+        console.log("first_buffer", result);
+        return Promise.all([parsem3u(result)]);
       })
-      context.downloadQueue = result[0].items.PlaylistItem.map((item) => {
-        return item.properties.uri;
-      });
-      console.log("duration", context.totalDuration);
-      console.log("playlist", context.downloadQueue);
-      return Promise.each(context.downloadQueue, (item) => {
-        console.log("downloading video");
-        return downloader(item)
-          .then((result) => {
-            console.log("piping to video stream");
-            context.videoStream.put(result.getContents());
-          });
+      .then((result) => {
+        console.log("stream_item", result[0].items.StreamItem);
+        var uri = getUriFromm3u(result[0]);
+        console.log("first_parse", uri);
+        return downloader(uri);
+      })
+      .then((result) => {
+        console.log("second_buffer", result);
+        return Promise.all([parsem3u(result)]);
+      })
+      .then ((result) => {
+        console.log("playlist_item", result[0].items.PlaylistItem);
+        result[0].items.PlaylistItem.forEach((item) => {
+          context.totalDuration += item.properties.duration;
+        })
+        context.downloadQueue = result[0].items.PlaylistItem.map((item) => {
+          return item.properties.uri;
         });
-    })
-    .then(() => {
-      console.log("ending stream");
-      context.videoStream.stop();
-      console.log("video_ts_buffer", context.videoStream);
-      return Promise.all([ffmpeg.convertToMp4Buffer(context.videoStream, context.totalDuration)]);
-    })
-    .then((result) => {
-      return result[0];
-    });
+        console.log("duration", context.totalDuration);
+        console.log("playlist", context.downloadQueue);
+        return Promise.each(context.downloadQueue, (item) => {
+          console.log("downloading video");
+          return downloader(item)
+            .then((result) => {
+              console.log("piping to video stream");
+              context.videoStream.put(result.getContents());
+            });
+          });
+      })
+      .then(() => {
+        console.log("ending stream");
+        context.videoStream.stop();
+        console.log("video_ts_buffer", context.videoStream);
+        return Promise.all([ffmpeg.convertToMp4Buffer(context.videoStream, context.totalDuration)]);
+      })
+      .then((result) => {
+        resolve(result[0]);
+      });
+  });
 }
