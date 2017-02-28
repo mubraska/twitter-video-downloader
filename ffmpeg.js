@@ -1,4 +1,4 @@
-var ffmpeg = require('fluent-ffmpeg')();
+var ffmpeg = require('fluent-ffmpeg');
 var Promise = require('bluebird');
 var streamBuffers = require('stream-buffers');
 var fs   = require('fs');
@@ -7,7 +7,7 @@ var convertToMp4Buffer = function(inputBuffer, duration) {
   return new Promise((resolve, reject) => {
     var stream = new streamBuffers.WritableStreamBuffer();
     try {
-      ffmpeg
+      ffmpeg()
         .input(inputBuffer)
         .format('mp4')
         .duration(duration)
