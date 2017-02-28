@@ -16,7 +16,6 @@ var convertToMp4Buffer = function(inputBuffer, duration) {
         .outputOptions(['-bsf:a aac_adtstoasc', '-movflags frag_keyframe+empty_moov'])
         .output(stream)
         .on('end', () => {
-          console.log("ffmpeg done");
           stream.end();
           resolve(stream);
         })

@@ -10,17 +10,14 @@ module.exports = function (url) {
 
     downloader(url)
       .on('finish', function(response) {
-        console.log('download finished');
       })
       .on('end', function(response) {
-        console.log("download completed");
       })
       .on('data', function(progress) {
         context.writeableStream.write(progress);
       })
       .then(function() {
         context.writeableStream.end();
-        console.log("resolving");
         resolve(context.writeableStream);
       })
       .catch(function(err) {
