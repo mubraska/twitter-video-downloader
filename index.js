@@ -30,10 +30,12 @@ function getUriFromm3u(m3u) {
 module.exports = function(tweetUrl) {
   return new Promise((resolve) => {
     context = {
-      videoStream: new streamBuffers.ReadableStreamBuffer(),
+      videoStream: null,
       downloadQueue: [],
       totalDuration: 0
     };
+
+    context.videoStream = new streamBuffers.ReadableStreamBuffer();
 
     twitterdl.download(tweetUrl)
       .then((result) => {

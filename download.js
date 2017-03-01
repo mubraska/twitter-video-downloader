@@ -5,8 +5,9 @@ var downloader = require('download');
 module.exports = function (url) {
   return new Promise((resolve, reject) => {
     var context = {
-      writeableStream: new streamBuffers.WritableStreamBuffer()
+      writeableStream: null
     };
+    context.writeableStream = new streamBuffers.WritableStreamBuffer()
 
     downloader(url)
       .on('finish', function(response) {

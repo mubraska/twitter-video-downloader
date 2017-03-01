@@ -5,7 +5,8 @@ var fs   = require('fs');
 
 var convertToMp4Buffer = function(inputBuffer, duration) {
   return new Promise((resolve, reject) => {
-    var stream = new streamBuffers.WritableStreamBuffer();
+    var stream = null;
+    stream = new streamBuffers.WritableStreamBuffer();
     try {
       ffmpeg()
         .input(inputBuffer)
