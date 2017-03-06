@@ -1,6 +1,6 @@
 {
     "name": "twitter-video-downloader",
-    "version": "1.0.10",
+    "version": "1.0.11",
     "description": "This is a video downloader and converter for a given video included twitter status update.",
     "keywords": ["twitter", "video", "mp4", "stream-buffer"],
     "maintainers": ["David Ventura <davidventura3@gmail.com>"],
