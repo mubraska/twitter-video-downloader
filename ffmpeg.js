@@ -14,7 +14,6 @@ var convertToMp4Buffer = function(inputBuffer, duration) {
         .duration(duration)
         .audioCodec('aac')
         .videoCodec('libx264')
-        .size('640x480')
         .outputOptions(['-bsf:a aac_adtstoasc', '-movflags frag_keyframe+empty_moov'])
         .output(stream)
         .on('end', () => {
